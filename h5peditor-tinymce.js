@@ -89,11 +89,9 @@ ns.TinyMCE.prototype.remove = function () {
 ns.TinyMCE.prototype.forceValue = function (value) {
   if (this.ckeditor === undefined) {
     this.$input.html(value);
-    console.log("if");
   }
   else {
     this.ckeditor.setData(value);
-    console.log("else");
   }
   this.validate();
 };
