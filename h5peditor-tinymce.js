@@ -9,16 +9,16 @@
  * @returns {undefined}
  */
 ns.TinyMCE = function (parent, field, params, setValue) {
-  this.parent = parent;
-  this.field = field;
-  this.value = params;
-  this.setValue = setValue;
-  this.tags = ns.$.merge(['br'], (this.field.tags || this.defaultTags));
+    this.parent = parent;
+    this.field = field;
+    this.value = params;
+    this.setValue = setValue;
+    this.tags = ns.$.merge(['br'], (this.field.tags || this.defaultTags));
 
 };
 
 ns.TinyMCE.prototype.inTags = function (value) {
-  return (ns.$.inArray(value.toLowerCase(), this.tags) >= 0);
+    return (ns.$.inArray(value.toLowerCase(), this.tags) >= 0);
 };
 
 /**
@@ -28,85 +28,101 @@ ns.TinyMCE.prototype.inTags = function (value) {
  * @returns {undefined}
  */
 ns.TinyMCE.prototype.appendTo = function ($wrapper) {
-  var that = this;
-  this.$item = ns.$(this.createTinyMCE()).appendTo($wrapper);
-  this.$input = this.$item.children('.ckeditor');
-  this.$errors = this.$item.children('.h5p-errors');
+    var that = this;
+    this.$item = ns.$(this.createTinyMCE()).appendTo($wrapper);
+    this.$input = this.$item.children('.ckeditor');
+    this.$errors = this.$item.children('.h5p-errors');
 
-  ns.bindImportantDescriptionEvents(this, this.field.name, this.parent);
+    ns.bindImportantDescriptionEvents(this, this.field.name, this.parent);
 
-  tinymce.init({
-    selector: '.ckeditor', // Seletor para os elementos com editor de texto
-    setup: function (editor) {
-      editor.on('change', function () {
-        that.validate();
-      });
-    }
-  });
+    tinymce.init({
+        selector: '.ckeditor', // Seletor para os elementos com editor de texto
+
+        height: 500,
+        plugins: 'codesample code',
+        codesample_languages: [
+            { text: 'HTML/XML', value: 'markup' },
+            { text: 'JavaScript', value: 'javascript' },
+            { text: 'CSS', value: 'css' },
+            { text: 'PHP', value: 'php' },
+            { text: 'Ruby', value: 'ruby' },
+            { text: 'Python', value: 'python' },
+            { text: 'Java', value: 'java' },
+            { text: 'C', value: 'c' },
+            { text: 'C#', value: 'csharp' },
+            { text: 'C++', value: 'cpp' }
+        ],
+
+        setup: function (editor) {
+            editor.on('change', function () {
+                that.validate();
+            });
+        }
+    });
 };
 
 /**
  * Create TinyMCE for the TinyMCE field.
  */
 ns.TinyMCE.prototype.createTinyMCE = function () {
-  const id = ns.getNextFieldId(this.field);
-  var input = '<textarea id="' + id + '" class="ckeditor" tabindex="0">';
-  if (this.value !== undefined) {
-    input += this.value;
-  }
-  input += '</textarea>';
+    const id = ns.getNextFieldId(this.field);
+    var input = '<textarea id="' + id + '" class="ckeditor" tabindex="0">';
+    if (this.value !== undefined) {
+        input += this.value;
+    }
+    input += '</textarea>';
 
-  return ns.createFieldMarkup(this.field, ns.createImportantDescription(this.field.important) + input, id);
+    return ns.createFieldMarkup(this.field, ns.createImportantDescription(this.field.important) + input, id);
 };
 
 ns.TinyMCE.prototype.validate = function () {
-  var that = this;
+    var that = this;
 
-  if (that.$errors.children().length) {
-    that.$errors.empty();
-    this.$input.addClass('error');
-  }
+    if (that.$errors.children().length) {
+        that.$errors.empty();
+        this.$input.addClass('error');
+    }
 
-  // Pega o valor digitado, com a formatação
-  var idUnico = this.$input.attr("id");
-  var value = tinyMCE.get(idUnico).getContent() || "Texto vazio";
+    // Pega o valor digitado, com a formatação
+    var idUnico = this.$input.attr("id");
+    var value = tinyMCE.get(idUnico).getContent() || "Texto vazio";
 
-  // Atualize o valor do campo com o conteúdo do TinyMCE
-  this.value = value;
-  this.setValue(this.field, value);
-  this.$input.change();
+    // Atualize o valor do campo com o conteúdo do TinyMCE
+    this.value = value;
+    this.setValue(this.field, value);
+    this.$input.change();
 
-  return value;
+    return value;
 };
 
 /**
  * Remove this item.
  */
 ns.TinyMCE.prototype.remove = function () {
-  this.$item.remove();
+    this.$item.remove();
 };
 
 ns.TinyMCE.prototype.forceValue = function (value) {
-  if (this.ckeditor === undefined) {
-    this.$input.html(value);
-  }
-  else {
-    this.ckeditor.setData(value);
-  }
-  this.validate();
+    if (this.ckeditor === undefined) {
+        this.$input.html(value);
+    }
+    else {
+        this.ckeditor.setData(value);
+    }
+    this.validate();
 };
 
 // Inicializa o TinyMCE
-document.addEventListener('DOMContentLoaded', function() {
-  // Cria um elemento de script
-  var script = document.createElement('script');
+document.addEventListener('DOMContentLoaded', function () {
+    // Cria um elemento de script
+    var script = document.createElement('script');
 
-  // Define o atributo src para o URL do script do TinyMCE
-  script.src = 'https://cdn.tiny.cloud/1/hcfimgc2pfz91410ky5zdlsbpu2r0zvaftznv1glpace7qn2/tinymce/6.7.1-31/tinymce.min.js';
+    // Define o atributo src para o URL do script do TinyMCE
+    script.src = 'https://cdn.tiny.cloud/1/hcfimgc2pfz91410ky5zdlsbpu2r0zvaftznv1glpace7qn2/tinymce/6.7.1-31/tinymce.min.js';
 
-  // Adiciona o script ao corpo do documento
-  document.body.appendChild(script);
+    // Adiciona o script ao corpo do documento
+    document.body.appendChild(script);
 
-  //Tinymce
-  ns.widgets.tinymce = ns.TinyMCE;
+    //Tinymce
+    ns.widgets.tinymce = ns.TinyMCE;
 });
